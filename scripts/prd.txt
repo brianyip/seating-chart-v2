@@ -1,0 +1,122 @@
+<context>
+
+# Overview
+
+**Seating Chart Planner** is a web-based layout tool for couples and wedding planners. It lets users drag guests from a collapsible Guest List onto tables on an infinite, zoomable canvas, then save the arrangement to the cloud so it’s available on any device.  The goal is to cut hours of manual spreadsheet work, prevent seating mistakes, and give planners an intuitive, Figma-style interface that “just feels right” inside Cursor IDE with Taskmaster Dev.
+
+# Core Features
+
+| Feature                           | What it does                                                         | Why it matters                                      | How it works (high level)                                                                  |
+| --------------------------------- | -------------------------------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| **Drag-and-Drop Seating**         | Pick a guest badge, move the cursor, and drop onto any seat.         | Fast, visual assignment beats manual lists.         | HTML `dragstart / dragover / drop` events paired with Supabase row updates.                |
+| **Seat-Name Display**             | Seat shows *First + Last initial* (e.g., “Brian Y”).                 | Keeps table view clean while still identifiable.    | Front-end formatter truncates name on render.                                              |
+| **Collapsible Guest List**        | Full names in a left sidebar that can hide/show.                     | Maximizes canvas space on smaller screens.          | Shadcn <Sheet> component, state synced to Redux/Zustand.                                   |
+| **Table Library & Toolbar**       | Bottom-floating control to add rectangle or circle tables.           | Mimics familiar Figma toolbar; reduces click depth. | Fixed-bottom div with “Add Rectangle” / “Add Circle” buttons that push a new `tables` row. |
+| **Right-Side Controls**           | Save, Reset All, Delete Table, etc. inside collapsible panel.        | Groups global actions away from drag area.          | Shadcn Accordion toggled by > icon.                                                        |
+| **Infinite Scroll & Zoom Canvas** | Pan with mouse, arrow keys; pinch/+/– to zoom.                       | Handles large venues and detailed layouts.          | `react-konva` stage with transform matrix and grid overlay.                                |
+| **Grid-Snap Alignment**           | Tables snap to discreet 20 px increments.                            | Produces tidy, symmetrical floorplans.              | Calculates nearest grid intersection on drag-end.                                          |
+| **Table Edit Modal**              | Double-click table to edit table # and seats (6-12).                 | Quick iteration without extra menus.                | Modal updates `tables` row; seats re-render.                                               |
+| **Seat Swap Logic**               | Drag guest onto occupied seat to swap, or onto Guest List to unseat. | Eliminates manual unseat/re-seat.                   | Atomic DB transaction swaps `guest_id` between seats.                                      |
+| **Auth + Storage**                | Supabase Auth ties floorplans to account; cloud save/load.           | Enables multi-device access and SaaS billing tiers. | `floorplans` table keyed to `user_id`; RLS policies enforced.                              |
+| **Payments**                      | Polar checkout gate before first save.                               | Monetizes value while keeping trial friction low.   | Polar webhook sets `plan=paid` in Supabase.                                                |
+
+# User Experience
+
+### Personas
+
+1. **DIY Couple** – tech-comfortable, wants a stress-free seating tool.
+2. **Professional Planner** – juggles multiple events, values speed and shareable links.
+
+### Key Flows
+
+1. **Sign Up → Pay → Create Floorplan**
+2. **Add / Import Guests → Add Tables → Drag-Seat Guests**
+3. **Edit Tables → Swap Seats → Save**
+4. **Return on another device → Auto-load last saved layout**
+
+### UI / UX Considerations
+
+* Minimal chrome; heavy keyboard + trackpad support.
+* Consistent “Figma” mental model: layers sidebar, floating toolbar, right-hand inspector.
+* Autosave every 5 s to Supabase (optimistic UI).
+* Dark-mode friendly Tailwind palette.
+
+</context>
+
+<PRD>
+
+# Technical Architecture
+
+| Component                | Role                                     | Tech                          |
+| ------------------------ | ---------------------------------------- | ----------------------------- |
+| **Next.js (App Router)** | Front-end SSR & API routes               | TypeScript                    |
+| **Canvas Layer**         | Infinite pan/zoom, seats, tables         | `react-konva` or `react-flow` |
+| **State Store**          | Local state sync                         | Zustand                       |
+| **Styling**              | UI components                            | Tailwind v4 + Shadcn/ui       |
+| **Database**             | Users, Guests, Floorplans, Tables, Seats | Supabase Postgres             |
+| **Auth**                 | Email + OAuth                            | Supabase Auth                 |
+| **Payments**             | Subscription gating                      | Polar                         |
+| **Hosting**              | Vercel (static + edge functions)         | Node 20                       |
+| **CI/CD**                | GitHub → Vercel preview                  | GitHub Actions                |
+
+### Data Models (simplified)
+
+* `users (id, email, plan)`
+* `floorplans (id, user_id, name, created_at, updated_at)`
+* `tables (id, floorplan_id, table_number, shape, seat_count, x, y, rotation)`
+* `guests (id, floorplan_id, full_name)`
+* `seats (id, table_id, seat_index, guest_id NULLABLE)`
+
+### APIs / Integrations
+
+* **Polar Webhooks** → `/api/polar/webhook` → update `users.plan`.
+* **Cursor Taskmaster** consumes this PRD to emit `tasks.json` with dependency graph.
+
+# Development Roadmap
+
+| Phase                            | Scope (atomic deliverables)                                                               |
+| -------------------------------- | ----------------------------------------------------------------------------------------- |
+| **0 — Scaffolding**              | Next.js project, Tailwind, Shadcn, Supabase connection, Polar test payment.               |
+| **1 — Auth + Billing MVP**       | Sign-up, login, payment wall; blank canvas loads.                                         |
+| **2 — Canvas Core**              | Infinite pan/zoom grid, add/move rectangle + circle tables, grid-snap.                    |
+| **3 — Guest List CRUD**          | Sidebar list, add/edit/delete guest, persist to DB.                                       |
+| **4 — Seating Drag-and-Drop**    | Drag guest → seat, seat shows shortened name, unseat/swap logic.                          |
+| **5 — Table Edit Modal**         | Double-click to change table # and seat count (6-12).                                     |
+| **6 — Autosave & Load**          | Debounced autosave, load last floorplan on login.                                         |
+| **7 — Right-Side Control Panel** | Save, Reset All, Delete Table, global actions.                                            |
+| **8 — Polish**                   | Keyboard shortcuts, responsive tweaks, dark mode, analytics.                              |
+| **9 — Post-MVP Enhancements**    | CSV import/export, PDF floorplan, share link with permissions, multi-floorplan dashboard. |
+
+# Logical Dependency Chain
+
+1. **Auth/Billing** → gate everything else.
+2. **Canvas & Tables** → foundation for any seating action.
+3. **Guest List CRUD** → provides draggable entities.
+4. **Drag-and-Drop Seating** → requires both canvas and guest list.
+5. **Swap/Unseat Logic** → extends drag-and-drop.
+6. **Autosave** → meaningful only once data mutation exists.
+7. **Advanced UX (grid-snap, zoom shortcuts)** → iterative improvements afterward.
+
+# Risks and Mitigations
+
+| Risk                                  | Impact                         | Mitigation                                                          |
+| ------------------------------------- | ------------------------------ | ------------------------------------------------------------------- |
+| Canvas performance with many elements | Lag on low-end devices         | Virtualize layers; throttle re-renders.                             |
+| Data race during seat swaps           | Corrupted seat assignments     | Use DB transactions; optimistic UI with rollback.                   |
+| Payment friction                      | Drop-off before value realized | Allow free trial with limited guest count.                          |
+| Supabase RLS complexity               | Accidental data leak           | Audit policies; integration tests.                                  |
+| Over-scoping MVP                      | Miss launch window             | Strict phase gates; Taskmaster dependency graph enforces cut lines. |
+
+# Appendix
+
+* **Figma Inspiration**: Floating bottom toolbar & dual sidebars replicate proven design patterns.
+* **Grid Size**: 20 px baseline, configurable later.
+* **Keyboard Shortcuts**:
+
+  * *Space + drag* → pan
+  * *Cmd/Ctrl + plus/minus* → zoom
+  * *Delete* → remove selected table/guest
+* **Testing Strategy**: Cypress for E2E (canvas interactions), Vitest for logic helpers.
+* **Accessibility**: ARIA roles for drag-and-drop; high-contrast mode toggle.
+
+</PRD>

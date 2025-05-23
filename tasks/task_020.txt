@@ -1,0 +1,11 @@
+# Task ID: 20
+# Title: Implement Accessibility Features
+# Status: pending
+# Dependencies: 1
+# Priority: low
+# Description: Add ARIA roles and high-contrast mode for accessibility.
+# Details:
+Use ARIA roles to enhance drag-and-drop accessibility. Implement a high-contrast mode toggle for better visibility.
+
+# Test Strategy:
+Conduct accessibility testing using tools like Axe to ensure compliance with accessibility standards.

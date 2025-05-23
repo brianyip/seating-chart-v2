@@ -1,0 +1,11 @@
+# Task ID: 12
+# Title: Enhance Canvas with Grid-Snap and Zoom Shortcuts
+# Status: pending
+# Dependencies: 4
+# Priority: low
+# Description: Improve canvas interactions with grid-snap and keyboard shortcuts for zooming.
+# Details:
+Implement grid-snap functionality to align tables to a 20 px grid. Add keyboard shortcuts for zooming in and out of the canvas.
+
+# Test Strategy:
+Test grid-snap alignment and keyboard shortcuts using Cypress to ensure usability improvements.

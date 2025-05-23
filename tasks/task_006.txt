@@ -1,0 +1,11 @@
+# Task ID: 6
+# Title: Create Guest List Sidebar
+# Status: pending
+# Dependencies: 1
+# Priority: medium
+# Description: Develop a collapsible guest list sidebar using Shadcn components.
+# Details:
+Use Shadcn <Sheet> component to create a collapsible sidebar for the guest list. Sync the state with Zustand for consistent state management.
+
+# Test Strategy:
+Test the sidebar's expand/collapse functionality and state synchronization using Cypress.

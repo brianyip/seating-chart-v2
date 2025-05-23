@@ -1,0 +1,11 @@
+# Task ID: 15
+# Title: Create PDF Floorplan Export
+# Status: pending
+# Dependencies: 4
+# Priority: low
+# Description: Enable users to export the seating chart as a PDF document.
+# Details:
+Use a library like jsPDF to implement PDF export functionality for the seating chart. Ensure the PDF accurately represents the current layout.
+
+# Test Strategy:
+Test PDF export functionality using Cypress to ensure the layout is correctly captured and exported.

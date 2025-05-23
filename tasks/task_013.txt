@@ -1,0 +1,11 @@
+# Task ID: 13
+# Title: Implement Dark Mode
+# Status: pending
+# Dependencies: 1
+# Priority: low
+# Description: Add dark mode support using Tailwind's dark mode features.
+# Details:
+Use Tailwind's dark mode utilities to implement a dark mode theme for the application. Ensure all UI components are styled appropriately for dark mode.
+
+# Test Strategy:
+Verify dark mode styling using visual regression tests to ensure consistency across components.
