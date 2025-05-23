@@ -1,0 +1,11 @@
+# Task ID: 9
+# Title: Implement Table Edit Modal
+# Status: pending
+# Dependencies: 5
+# Priority: medium
+# Description: Allow users to edit table numbers and seat counts via a modal.
+# Details:
+Develop a modal that appears on double-clicking a table, allowing users to edit the table number and seat count. Update the table data in Supabase accordingly.
+
+# Test Strategy:
+Verify modal functionality and data updates using Cypress tests.

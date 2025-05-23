@@ -1,0 +1,43 @@
+# Task ID: 19
+# Title: Audit Supabase RLS Policies
+# Status: pending
+# Dependencies: 2
+# Priority: medium
+# Description: Ensure Supabase Row Level Security policies are correctly configured to work with Better Auth's user identification.
+# Details:
+Review and audit all Supabase RLS policies to ensure they reference the user ID from Better Auth's session/token, not Supabase Auth's auth.uid(). Investigate methods to make Better Auth's user ID available to RLS policies (e.g., custom session variables, helper functions). This is critical to maintain data security and prevent accidental data leaks when using our custom authentication system.
+
+# Test Strategy:
+Perform integration tests to validate RLS policy configurations with Better Auth tokens. Create test cases that verify data access is correctly restricted based on Better Auth user IDs. Test both positive and negative scenarios to ensure policies are enforcing proper access control.
+
+# Subtasks:
+## 19.1. Investigate Better Auth integration with RLS [pending]
+### Dependencies: None
+### Description: Research methods to make Better Auth's user ID available to Supabase RLS policies
+### Details:
+
+
+## 19.2. Create custom helper functions [pending]
+### Dependencies: None
+### Description: Develop helper functions or session variables that expose Better Auth user IDs to RLS policies
+### Details:
+
+
+## 19.3. Update existing RLS policies [pending]
+### Dependencies: None
+### Description: Modify all RLS policies to use Better Auth user IDs instead of auth.uid()
+### Details:
+
+
+## 19.4. Document RLS policy patterns [pending]
+### Dependencies: None
+### Description: Create documentation for the team on how to write RLS policies that work with Better Auth
+### Details:
+
+
+## 19.5. Create test suite [pending]
+### Dependencies: None
+### Description: Develop comprehensive tests to verify RLS policies work correctly with Better Auth tokens
+### Details:
+
+

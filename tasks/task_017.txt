@@ -1,0 +1,11 @@
+# Task ID: 17
+# Title: Develop Multi-Floorplan Dashboard
+# Status: pending
+# Dependencies: 10
+# Priority: low
+# Description: Create a dashboard for managing multiple floorplans.
+# Details:
+Implement a dashboard interface that allows users to view and manage multiple floorplans. Use Zustand for state management and Supabase for data storage.
+
+# Test Strategy:
+Test dashboard functionality using Cypress to ensure users can manage multiple floorplans effectively.

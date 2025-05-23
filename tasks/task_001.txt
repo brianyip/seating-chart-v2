@@ -1,0 +1,475 @@
+# Task ID: 1
+# Title: Setup Project Repository
+# Status: done
+# Dependencies: None
+# Priority: high
+# Description: Initialize the project repository with Next.js, Tailwind, Shadcn, Supabase, and Polar test payment.
+# Details:
+Create a new Next.js project using TypeScript. Integrate Tailwind CSS for styling and Shadcn for UI components. Set up Supabase for database and authentication. Configure Polar for payment processing. Ensure all dependencies are installed and the project is hosted on Vercel.
+
+# Test Strategy:
+Verify the project setup by running the development server and checking the integration of Tailwind, Shadcn, Supabase, and Polar.
+
+# Subtasks:
+## 1. Initialize Next.js Project with TypeScript [done]
+### Dependencies: None
+### Description: Create a new Next.js project using TypeScript to ensure type safety and better developer experience.
+### Details:
+Run `npx create-next-app@latest --ts` to bootstrap a Next.js app with TypeScript support. This will generate the necessary project structure and configuration files, including `tsconfig.json`.[3][4][5]
+
+## 2. Configure Tailwind CSS and Shadcn UI [done]
+### Dependencies: 1.1
+### Description: Set up Tailwind CSS for utility-first styling and integrate Shadcn UI components for rapid UI development.
+### Details:
+Install Tailwind CSS following the official Next.js guide, configure `tailwind.config.js`, and add Tailwind directives to your global CSS. Then, install Shadcn UI and import desired components into your project.
+
+## 3. Set Up Supabase Integration [done]
+### Dependencies: 1.1
+### Description: Integrate Supabase for backend services such as authentication and database management.
+### Details:
+Install the Supabase client library, configure environment variables with your Supabase project credentials, and initialize Supabase in your Next.js app for data operations.
+<info added on 2025-05-18T22:57:28.768Z>
+<update timestamp="2023-11-01T12:00:00Z">Implementation Plan for Task 1.3: Set up Supabase Integration
+
+Based on Supabase documentation for Next.js App Router using `@supabase/ssr`:
+
+1. **Install Dependencies:**
+   * Required packages: `@supabase/supabase-js`, `@supabase/ssr`.
+   * Command: `npm install @supabase/supabase-js @supabase/ssr`.
+
+2. **Environment Variables:**
+   * Create/update `.env.local` with:
+     ```env
+     NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+     NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+     ```
+   * User will need to replace placeholders with actual credentials.
+   * Update `.env.example` accordingly.
+   * Ensure `.env.local` is in `.gitignore`.
+
+3. **Supabase Client Utility Files (under `src/lib/supabase/`):**
+   * **`client.ts` (Browser Client):**
+     ```typescript
+     import { createBrowserClient } from '@supabase/ssr'
+
+     export function createClient() {
+       return createBrowserClient(
+         process.env.NEXT_PUBLIC_SUPABASE_URL!,
+         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+       )
+     }
+     ```
+   * **`server.ts` (Server Client):**
+     ```typescript
+     import { createServerClient, type CookieOptions } from '@supabase/ssr'
+     import { cookies } from 'next/headers'
+
+     export function createClient() {
+       const cookieStore = cookies()
+
+       return createServerClient(
+         process.env.NEXT_PUBLIC_SUPABASE_URL!,
+         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+         {
+           cookies: {
+             getAll() {
+               return cookieStore.getAll()
+             },
+             setAll(cookiesToSet) {
+               try {
+                 cookiesToSet.forEach(({ name, value, options }) =>
+                   cookieStore.set(name, value, options)
+                 )
+               } catch {
+                 // The `setAll` method was called from a Server Component.
+                 // This can be ignored if you have middleware refreshing
+                 // user sessions.
+               }
+             },
+           },
+         }
+       )
+     }
+     ```
+   * **`middleware.ts` (Middleware Helper):**
+     ```typescript
+     import { createServerClient, type CookieOptions } from '@supabase/ssr'
+     import { NextResponse, type NextRequest } from 'next/server'
+
+     export async function updateSession(request: NextRequest) {
+       let supabaseResponse = NextResponse.next({
+         request,
+       })
+
+       const supabase = createServerClient(
+         process.env.NEXT_PUBLIC_SUPABASE_URL!,
+         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+         {
+           cookies: {
+             getAll() {
+               return request.cookies.getAll()
+             },
+             setAll(cookiesToSet) {
+               cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value, options))
+               supabaseResponse = NextResponse.next({
+                 request,
+               })
+               cookiesToSet.forEach(({ name, value, options }) =>
+                 supabaseResponse.cookies.set(name, value, options)
+               )
+             },
+           },
+         }
+       )
+       await supabase.auth.getUser()
+       return supabaseResponse
+     }
+     ```
+
+4. **Main Middleware File:**
+   * Create `src/middleware.ts`.
+   * Content:
+     ```typescript
+     import { type NextRequest } from 'next/server'
+     import { updateSession } from '@/lib/supabase/middleware' // Or relative path
+
+     export async function middleware(request: NextRequest) {
+       return await updateSession(request)
+     }
+
+     export const config = {
+       matcher: [
+         '/((?!_next/static|_next/image|favicon.ico|.*\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+       ],
+     }
+     ```
+   * Path alias `@/` needs to be confirmed from `tsconfig.json`.
+</update>
+</info added on 2025-05-18T22:57:28.768Z>
+<info added on 2025-05-18T23:03:42.963Z>
+<update timestamp="2023-11-01T12:00:00Z">Implementation Plan for Task 1.3: Set up Supabase Integration
+
+Based on Supabase documentation for Next.js App Router using `@supabase/ssr`:
+
+1. **Install Dependencies:**
+   * Required packages: `@supabase/supabase-js`, `@supabase/ssr`.
+   * Command: `npm install @supabase/supabase-js @supabase/ssr`.
+
+2. **Environment Variables:**
+   * Create/update `.env.local` with:
+     ```env
+     NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+     NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+     ```
+   * User will need to replace placeholders with actual credentials.
+   * Update `.env.example` accordingly.
+   * Ensure `.env.local` is in `.gitignore`.
+
+3. **Supabase Client Utility Files (under `src/lib/supabase/`):**
+   * **`client.ts` (Browser Client):**
+     ```typescript
+     import { createBrowserClient } from '@supabase/ssr'
+
+     export function createClient() {
+       return createBrowserClient(
+         process.env.NEXT_PUBLIC_SUPABASE_URL!,
+         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+       )
+     }
+     ```
+   * **`server.ts` (Server Client):**
+     ```typescript
+     import { createServerClient, type CookieOptions } from '@supabase/ssr'
+     import { cookies } from 'next/headers'
+
+     export function createClient() {
+       const cookieStore = cookies()
+
+       return createServerClient(
+         process.env.NEXT_PUBLIC_SUPABASE_URL!,
+         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+         {
+           cookies: {
+             getAll() {
+               return cookieStore.getAll()
+             },
+             setAll(cookiesToSet) {
+               try {
+                 cookiesToSet.forEach(({ name, value, options }) =>
+                   cookieStore.set(name, value, options)
+                 )
+               } catch {
+                 // The `setAll` method was called from a Server Component.
+                 // This can be ignored if you have middleware refreshing
+                 // user sessions.
+               }
+             },
+           },
+         }
+       )
+     }
+     ```
+   * **`middleware.ts` (Middleware Helper):**
+     ```typescript
+     import { createServerClient, type CookieOptions } from '@supabase/ssr'
+     import { NextResponse, type NextRequest } from 'next/server'
+
+     export async function updateSession(request: NextRequest) {
+       let supabaseResponse = NextResponse.next({
+         request,
+       })
+
+       const supabase = createServerClient(
+         process.env.NEXT_PUBLIC_SUPABASE_URL!,
+         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+         {
+           cookies: {
+             getAll() {
+               return request.cookies.getAll()
+             },
+             setAll(cookiesToSet) {
+               cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value, options))
+               supabaseResponse = NextResponse.next({
+                 request,
+               })
+               cookiesToSet.forEach(({ name, value, options }) =>
+                 supabaseResponse.cookies.set(name, value, options)
+               )
+             },
+           },
+         }
+       )
+       await supabase.auth.getUser()
+       return supabaseResponse
+     }
+     ```
+
+4. **Main Middleware File:**
+   * Create `src/middleware.ts`.
+   * Content:
+     ```typescript
+     import { type NextRequest } from 'next/server'
+     import { updateSession } from '@/lib/supabase/middleware' // Or relative path
+
+     export async function middleware(request: NextRequest) {
+       return await updateSession(request)
+     }
+
+     export const config = {
+       matcher: [
+         '/((?!_next/static|_next/image|favicon.ico|.*\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+       ],
+     }
+     ```
+   * Path alias `@/` needs to be confirmed from `tsconfig.json`.
+</update>
+
+<info added on 2023-11-01T12:30:00Z>
+<update timestamp="2023-11-01T12:30:00Z">Progress Update for Task 1.3: Set Up Supabase Integration
+
+The following steps have been completed:
+
+- Installed `@supabase/supabase-js` and `@supabase/ssr` packages.
+- User confirmed creation of `.env.local` with Supabase credentials.
+- Created `src/lib/supabase/client.ts` (browser client).
+- Created `src/lib/supabase/server.ts` (server client).
+- Created `src/lib/supabase/middleware.ts` (updateSession helper).
+- Created `src/middleware.ts` (main Next.js middleware).
+
+Basic Supabase SDK setup and middleware configuration are complete. Next steps involve integrating these clients into components/routes and conducting thorough testing to ensure proper functionality.</update>
+</info added on 2023-11-01T12:30:00Z>
+</info added on 2025-05-18T23:03:42.963Z>
+<info added on 2025-05-22T05:30:42.720Z>
+<update timestamp="2023-11-01T12:45:00Z">Description Update for Task 1.3: Set Up Supabase Integration
+
+The task description has been updated to reflect the change in authentication strategy. Supabase will be used primarily for database management, while authentication responsibilities have been shifted to Better Auth. This change requires ensuring that all authentication-related code and configurations are removed from the Supabase setup and replaced with Better Auth's integration procedures. The current Supabase integration focuses on efficient database operations and middleware setup for data handling.</update>
+</info added on 2025-05-22T05:30:42.720Z>
+<info added on 2025-05-22T20:23:42.760Z>
+Integrate Supabase for database management and storage services. This task focuses solely on setting up Supabase for database operations, excluding any authentication functionalities, which are managed by Better Auth.
+
+1. **Database Connection Setup:**
+   - Establish a connection to Supabase for database and storage services.
+   - Ensure environment variables are configured for database access:
+     ```env
+     NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+     NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+     ```
+   - Update `.env.example` to reflect these changes.
+
+2. **Data Operation Client Configuration:**
+   - Create utility files for database operations under `src/lib/supabase/`.
+   - Remove any authentication-related code from these files.
+
+3. **Environment Variables for Database Access:**
+   - Ensure `.env.local` contains only database-related credentials.
+   - Confirm `.env.local` is listed in `.gitignore`.
+
+4. **Prepare for RLS Policies:**
+   - Plan for Row Level Security (RLS) policies that integrate with Better Auth user IDs.
+   - Ensure that database operations are compatible with these policies.
+
+Remove all references to Supabase authentication, including any middleware or client setup related to authentication, as Better Auth will handle all authentication processes.
+</info added on 2025-05-22T20:23:42.760Z>
+
+## 4. Implement Polar Payment Processing [done]
+### Dependencies: 1.1, 1.2, 1.3
+### Description: Integrate Polar for handling payment processing within the application.
+### Details:
+Install the Polar SDK or API client, configure payment endpoints, and implement payment flows in your Next.js app, ensuring secure handling of payment data.
+<info added on 2025-05-18T23:14:30.090Z>
+Implementation Plan for Task 1.4: Implement Polar Payment Processing
+
+Based on Polar documentation (https://docs.polar.sh/introduction):
+
+1. **Install Dependencies:**
+   * Required packages: `@polar-sh/nextjs`, `zod`.
+   * Command: `npm install @polar-sh/nextjs zod`.
+
+2. **Environment Variables:**
+   * Add to `.env.local` (user to fill actual values):
+     ```env
+     POLAR_ACCESS_TOKEN=your_polar_access_token
+     SUCCESS_URL=your_success_redirect_url (e.g., /payment-success)
+     ```
+   * Update `.env.example` with these variables.
+
+3. **Create Basic Checkout Route Handler:**
+   * File: `src/app/api/checkout/route.ts` (or similar, assuming App Router).
+   * Content:
+     ```typescript
+     import { Checkout } from '@polar-sh/nextjs';
+     import {NextResponse} from "next/server";
+
+     // Ensure that the GET handler is exported correctly for Next.js App Router.
+     // The Polar documentation shows a direct export, which should work.
+     export async function GET(request: Request) {
+       // The Checkout function from Polar SDK is designed to be a GET handler directly.
+       // It typically handles the redirect to Polar's checkout page.
+       // We might need to invoke it or it might return a handler.
+       // For now, assuming it returns a handler or a Response directly.
+       
+       // Defensive check for environment variables
+       if (!process.env.POLAR_ACCESS_TOKEN) {
+         return NextResponse.json({ error: 'Polar access token is not configured.' }, { status: 500 });
+       }
+       if (!process.env.SUCCESS_URL) {
+         return NextResponse.json({ error: 'Success URL is not configured.' }, { status: 500 });
+       }
+
+       const polarCheckout = Checkout({
+         accessToken: process.env.POLAR_ACCESS_TOKEN,
+         successUrl: process.env.SUCCESS_URL,
+       });
+       
+       // The Polar 'Checkout' utility likely returns a Next.js request handler or a Response.
+       // If it's a handler, it needs to be called with the request.
+       // If it directly returns a Response, that's fine.
+       // Let's assume it returns a handler that we need to call.
+       // The type of 'Checkout' would clarify this, but proceeding based on typical patterns.
+       return polarCheckout(request);
+     }
+     ```
+
+4. **User Actions Required Post-Implementation:**
+   * Obtain `POLAR_ACCESS_TOKEN` from Polar dashboard and set it in `.env.local`.
+   * Define and set `SUCCESS_URL` in `.env.local` (e.g., `/payment-success`).
+   * Create the actual success page (e.g., `src/app/payment-success/page.tsx`).
+</info added on 2025-05-18T23:14:30.090Z>
+<info added on 2025-05-18T23:20:20.020Z>
+Install the Polar SDK or API client, configure payment endpoints, and implement payment flows in your Next.js app, ensuring secure handling of payment data.
+<info added on 2025-05-18T23:14:30.090Z>
+Implementation Plan for Task 1.4: Implement Polar Payment Processing
+
+Based on Polar documentation (https://docs.polar.sh/introduction):
+
+1. **Install Dependencies:**
+   * Required packages: `@polar-sh/nextjs`, `zod`.
+   * Command: `npm install @polar-sh/nextjs zod`.
+
+2. **Environment Variables:**
+   * Add to `.env.local` (user to fill actual values):
+     ```env
+     POLAR_ACCESS_TOKEN=your_polar_access_token
+     SUCCESS_URL=your_success_redirect_url (e.g., /payment-success)
+     ```
+   * Update `.env.example` with these variables.
+
+3. **Create Basic Checkout Route Handler:**
+   * File: `src/app/api/checkout/route.ts` (or similar, assuming App Router).
+   * Content:
+     ```typescript
+     import { Checkout } from '@polar-sh/nextjs';
+     import {NextResponse} from "next/server";
+
+     // Ensure that the GET handler is exported correctly for Next.js App Router.
+     // The Polar documentation shows a direct export, which should work.
+     export async function GET(request: Request) {
+       // The Checkout function from Polar SDK is designed to be a GET handler directly.
+       // It typically handles the redirect to Polar's checkout page.
+       // We might need to invoke it or it might return a handler.
+       // For now, assuming it returns a handler or a Response directly.
+       
+       // Defensive check for environment variables
+       if (!process.env.POLAR_ACCESS_TOKEN) {
+         return NextResponse.json({ error: 'Polar access token is not configured.' }, { status: 500 });
+       }
+       if (!process.env.SUCCESS_URL) {
+         return NextResponse.json({ error: 'Success URL is not configured.' }, { status: 500 });
+       }
+
+       const polarCheckout = Checkout({
+         accessToken: process.env.POLAR_ACCESS_TOKEN,
+         successUrl: process.env.SUCCESS_URL,
+       });
+       
+       // The Polar 'Checkout' utility likely returns a Next.js request handler or a Response.
+       // If it's a handler, it needs to be called with the request.
+       // If it directly returns a Response, that's fine.
+       // Let's assume it returns a handler that we need to call.
+       // The type of 'Checkout' would clarify this, but proceeding based on typical patterns.
+       return polarCheckout(request);
+     }
+     ```
+
+4. **User Actions Required Post-Implementation:**
+   * Obtain `POLAR_ACCESS_TOKEN` from Polar dashboard and set it in `.env.local`.
+   * Define and set `SUCCESS_URL` in `.env.local` (e.g., `/payment-success`).
+   * Create the actual success page (e.g., `src/app/payment-success/page.tsx`).
+</info added on 2025-05-18T23:14:30.090Z>
+
+<info added on 2025-05-19T15:45:00.000Z>
+Progress Update for Task 1.4: Implement Polar Payment Processing
+
+The following steps have been completed:
+
+- Installed `@polar-sh/nextjs` and `zod` packages.
+- User confirmed that `.env.local` has been updated with `POLAR_ACCESS_TOKEN` and `SUCCESS_URL`.
+- Created `src/app/api/checkout/route.ts` with a GET handler that initializes Polar Checkout.
+
+The basic Polar checkout route is now set up. The next steps involve:
+
+- User configuration of environment variables to ensure they are correctly set.
+- Creation of a success page at `src/app/payment-success/page.tsx`.
+- Frontend integration to trigger the checkout process from the user interface.
+</info added on 2025-05-19T15:45:00.000Z>
+</info added on 2025-05-18T23:20:20.020Z>
+
+## 5. Deploy Application to Vercel [done]
+### Dependencies: 1.1, 1.2, 1.3, 1.4
+### Description: Deploy the fully configured Next.js application to Vercel for production hosting.
+### Details:
+Connect your repository to Vercel, configure environment variables as needed, and trigger a deployment. Verify that all integrations (Tailwind, Shadcn, Supabase, Polar) work as expected in the deployed environment.
+<info added on 2025-05-19T14:28:03.116Z>
+<update timestamp="2023-10-06T12:00:00Z">Implementation Plan for Task 1.5: Deploy Application to Vercel
+
+1. Prepare project: Ensure all code is committed and pushed to a Git provider (GitHub, GitLab, Bitbucket). Double-check all required environment variables are documented and ready for production.
+2. Connect to Vercel: Go to https://vercel.com/import, select your Git provider, and import your repository.
+3. Add environment variables in Vercel dashboard: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, POLAR_ACCESS_TOKEN, SUCCESS_URL (use production values).
+4. Confirm build settings: Vercel should auto-detect Next.js. Build command: `next build`, output: `.next`.
+5. Deploy: Click 'Deploy' to trigger the first deployment. Wait for build and deployment to complete.
+6. Verify: Visit the production URL, test all integrations (Tailwind, Shadcn, Supabase, Polar payment flow, /payment-success page). Check Vercel logs if needed.
+7. (Optional) Set up a custom domain in Vercel if desired.
+
+Ready to proceed with deployment steps.</update>
+</info added on 2025-05-19T14:28:03.116Z>
+

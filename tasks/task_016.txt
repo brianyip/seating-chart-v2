@@ -1,0 +1,11 @@
+# Task ID: 16
+# Title: Implement Share Link with Permissions
+# Status: pending
+# Dependencies: 10
+# Priority: low
+# Description: Allow users to share floorplans via a link with configurable permissions.
+# Details:
+Develop a system to generate shareable links for floorplans. Implement permission settings to control access levels for shared links.
+
+# Test Strategy:
+Test link generation and permission settings using Cypress to ensure secure and correct access control.

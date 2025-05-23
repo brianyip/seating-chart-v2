@@ -1,0 +1,171 @@
+{
+  "meta": {
+    "generatedAt": "2025-05-18T22:47:44.899Z",
+    "tasksAnalyzed": 20,
+    "thresholdScore": 5,
+    "projectName": "Taskmaster",
+    "usedResearch": true
+  },
+  "complexityAnalysis": [
+    {
+      "taskId": 1,
+      "taskTitle": "Setup Project Repository",
+      "complexityScore": 7,
+      "recommendedSubtasks": 5,
+      "expansionPrompt": "Break down the project repository setup into steps for initializing Next.js with TypeScript, configuring Tailwind CSS and Shadcn, setting up Supabase integration, implementing Polar payment processing, and deploying to Vercel.",
+      "reasoning": "This task involves multiple technologies and integrations (Next.js, TypeScript, Tailwind, Shadcn, Supabase, Polar, Vercel) that need to work together, increasing its cyclomatic complexity due to the number of potential paths and configurations."
+    },
+    {
+      "taskId": 2,
+      "taskTitle": "Implement User Authentication",
+      "complexityScore": 6,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Divide the authentication implementation into subtasks for Supabase Auth configuration, email authentication flow, OAuth provider integration, and session management.",
+      "reasoning": "Authentication involves multiple flows (email and OAuth) and security considerations, with moderate complexity due to the use of Supabase Auth which abstracts some implementation details but still requires careful configuration."
+    },
+    {
+      "taskId": 3,
+      "taskTitle": "Integrate Payment System",
+      "complexityScore": 8,
+      "recommendedSubtasks": 5,
+      "expansionPrompt": "Break down the payment system integration into subtasks for Polar API setup, payment wall implementation, webhook configuration, user plan management in Supabase, and payment flow testing.",
+      "reasoning": "Payment systems have high complexity due to security requirements, webhook handling, and the need to maintain data consistency between the payment provider and database, with multiple potential failure points."
+    },
+    {
+      "taskId": 4,
+      "taskTitle": "Develop Infinite Canvas",
+      "complexityScore": 9,
+      "recommendedSubtasks": 6,
+      "expansionPrompt": "Divide the infinite canvas development into subtasks for basic canvas setup with react-konva, implementing pan functionality, zoom controls, performance optimization, viewport management, and canvas state persistence.",
+      "reasoning": "Implementing an infinite, zoomable canvas involves complex mathematical transformations, performance optimizations, and state management to handle potentially large numbers of elements, making it one of the most complex tasks."
+    },
+    {
+      "taskId": 5,
+      "taskTitle": "Implement Table Management",
+      "complexityScore": 7,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Break down table management into subtasks for rectangle table implementation, circle table implementation, grid-snap alignment system, and Supabase data storage integration.",
+      "reasoning": "This task builds on the canvas functionality and adds shape rendering, alignment logic, and data persistence, increasing its complexity through the interaction of multiple systems."
+    },
+    {
+      "taskId": 6,
+      "taskTitle": "Create Guest List Sidebar",
+      "complexityScore": 5,
+      "recommendedSubtasks": 3,
+      "expansionPrompt": "Divide the guest list sidebar implementation into subtasks for Shadcn Sheet component integration, Zustand state management setup, and guest list UI development.",
+      "reasoning": "This task has moderate complexity as it involves UI component integration and state management, but uses existing components (Shadcn) and follows established patterns."
+    },
+    {
+      "taskId": 7,
+      "taskTitle": "Implement Drag-and-Drop Seating",
+      "complexityScore": 8,
+      "recommendedSubtasks": 5,
+      "expansionPrompt": "Break down drag-and-drop seating into subtasks for drag event handling, drop zone implementation, visual feedback during dragging, Supabase data updates, and state synchronization.",
+      "reasoning": "Drag-and-drop functionality across components with data persistence involves complex event handling, state management, and database operations that must work together seamlessly."
+    },
+    {
+      "taskId": 8,
+      "taskTitle": "Develop Seat Swap Logic",
+      "complexityScore": 7,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Divide seat swap logic into subtasks for swap detection algorithm, unseating functionality, atomic database transaction implementation, and UI feedback for swap operations.",
+      "reasoning": "This task requires complex state management and database operations to ensure data integrity during concurrent operations, with multiple edge cases to handle."
+    },
+    {
+      "taskId": 9,
+      "taskTitle": "Implement Table Edit Modal",
+      "complexityScore": 5,
+      "recommendedSubtasks": 3,
+      "expansionPrompt": "Break down the table edit modal implementation into subtasks for modal UI development, form validation logic, and Supabase data update integration.",
+      "reasoning": "This task has moderate complexity as it involves standard form handling and database operations, with relatively straightforward requirements and established patterns."
+    },
+    {
+      "taskId": 10,
+      "taskTitle": "Add Autosave and Load Feature",
+      "complexityScore": 6,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Divide autosave and load functionality into subtasks for debounced save implementation, floorplan serialization/deserialization, load on login logic, and error handling for data persistence.",
+      "reasoning": "This task involves timing-based operations, data serialization, and handling potential network issues, increasing its complexity through the need to maintain data integrity."
+    },
+    {
+      "taskId": 11,
+      "taskTitle": "Develop Right-Side Control Panel",
+      "complexityScore": 4,
+      "recommendedSubtasks": 3,
+      "expansionPrompt": "Break down the control panel development into subtasks for Shadcn Accordion implementation, action button functionality, and integration with existing canvas operations.",
+      "reasoning": "This task primarily involves UI component integration with relatively straightforward functionality, making it less complex than tasks involving data manipulation or state management."
+    },
+    {
+      "taskId": 12,
+      "taskTitle": "Enhance Canvas with Grid-Snap and Zoom Shortcuts",
+      "complexityScore": 6,
+      "recommendedSubtasks": 3,
+      "expansionPrompt": "Divide canvas enhancements into subtasks for grid-snap alignment algorithm, keyboard shortcut implementation, and integration with existing canvas functionality.",
+      "reasoning": "This task builds on the existing canvas implementation with additional features that require mathematical calculations for alignment and event handling for shortcuts."
+    },
+    {
+      "taskId": 13,
+      "taskTitle": "Implement Dark Mode",
+      "complexityScore": 4,
+      "recommendedSubtasks": 3,
+      "expansionPrompt": "Break down dark mode implementation into subtasks for Tailwind dark mode configuration, component theme adaptation, and user preference persistence.",
+      "reasoning": "This task has lower complexity as it leverages Tailwind's built-in dark mode utilities, though it requires attention to styling consistency across all components."
+    },
+    {
+      "taskId": 14,
+      "taskTitle": "Develop CSV Import/Export Feature",
+      "complexityScore": 7,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Divide CSV functionality into subtasks for CSV parsing implementation, data mapping between CSV and application models, export functionality, and error handling for malformed data.",
+      "reasoning": "This task involves data transformation, file handling, and error management for potentially inconsistent input formats, increasing its complexity."
+    },
+    {
+      "taskId": 15,
+      "taskTitle": "Create PDF Floorplan Export",
+      "complexityScore": 7,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Break down PDF export into subtasks for canvas rendering to PDF format, layout optimization for print, metadata inclusion, and download functionality.",
+      "reasoning": "PDF generation from a complex canvas involves rendering transformations, layout considerations, and potentially large data handling, making it moderately complex."
+    },
+    {
+      "taskId": 16,
+      "taskTitle": "Implement Share Link with Permissions",
+      "complexityScore": 8,
+      "recommendedSubtasks": 5,
+      "expansionPrompt": "Divide share link functionality into subtasks for link generation system, permission model definition, access control implementation, UI for permission configuration, and link validation.",
+      "reasoning": "This task involves security considerations, permission modeling, and potentially complex database queries to enforce access control, increasing its complexity."
+    },
+    {
+      "taskId": 17,
+      "taskTitle": "Develop Multi-Floorplan Dashboard",
+      "complexityScore": 7,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Break down the dashboard implementation into subtasks for floorplan listing UI, management operations (create, delete, duplicate), state management with Zustand, and Supabase integration.",
+      "reasoning": "This task requires handling multiple data entities with CRUD operations and state management, with moderate complexity due to the number of operations and UI states."
+    },
+    {
+      "taskId": 18,
+      "taskTitle": "Optimize Canvas Performance",
+      "complexityScore": 9,
+      "recommendedSubtasks": 5,
+      "expansionPrompt": "Divide performance optimization into subtasks for virtualization implementation, render throttling, memory usage optimization, performance profiling, and device-specific optimizations.",
+      "reasoning": "Performance optimization involves complex algorithms, deep understanding of rendering pipelines, and careful measurement of multiple metrics, making it one of the most complex tasks."
+    },
+    {
+      "taskId": 19,
+      "taskTitle": "Audit Supabase RLS Policies",
+      "complexityScore": 8,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Break down the RLS audit into subtasks for policy review methodology, security testing implementation, policy refinement, and documentation of security measures.",
+      "reasoning": "Security auditing requires deep understanding of the data model, access patterns, and potential attack vectors, with high complexity due to the need for comprehensive testing."
+    },
+    {
+      "taskId": 20,
+      "taskTitle": "Implement Accessibility Features",
+      "complexityScore": 6,
+      "recommendedSubtasks": 3,
+      "expansionPrompt": "Divide accessibility implementation into subtasks for ARIA role integration, high-contrast mode development, and keyboard navigation enhancements.",
+      "reasoning": "Accessibility implementation involves understanding WCAG guidelines and testing across multiple assistive technologies, with moderate complexity due to the need to maintain functionality while improving accessibility."
+    }
+  ]
+}

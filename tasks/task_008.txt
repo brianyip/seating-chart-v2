@@ -1,0 +1,11 @@
+# Task ID: 8
+# Title: Develop Seat Swap Logic
+# Status: pending
+# Dependencies: 7
+# Priority: medium
+# Description: Implement logic to swap guests between seats or unseat them.
+# Details:
+Create a system to allow guests to be swapped between seats or unseated by dragging them back to the guest list. Use atomic DB transactions to ensure data integrity.
+
+# Test Strategy:
+Test seat swapping and unseating functionality using Cypress to ensure data consistency.

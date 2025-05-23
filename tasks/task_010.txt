@@ -1,0 +1,11 @@
+# Task ID: 10
+# Title: Add Autosave and Load Feature
+# Status: pending
+# Dependencies: 7
+# Priority: medium
+# Description: Implement autosave functionality and load the last saved floorplan on login.
+# Details:
+Use a debounced function to autosave floorplans to Supabase every 5 seconds. Load the last saved floorplan when a user logs in.
+
+# Test Strategy:
+Test autosave intervals and loading of floorplans using Cypress to ensure data persistence.

@@ -1,0 +1,11 @@
+# Task ID: 14
+# Title: Develop CSV Import/Export Feature
+# Status: pending
+# Dependencies: 6
+# Priority: low
+# Description: Allow users to import and export guest lists and seating arrangements via CSV.
+# Details:
+Implement functionality to import guest lists and seating arrangements from CSV files and export current arrangements to CSV. Use a library like Papaparse for CSV parsing.
+
+# Test Strategy:
+Test CSV import and export functionality using Cypress to ensure data is correctly parsed and formatted.

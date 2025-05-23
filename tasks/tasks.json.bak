@@ -1,0 +1,317 @@
+{
+  "tasks": [
+    {
+      "id": 1,
+      "title": "Setup Project Repository",
+      "description": "Initialize the project repository with Next.js, Tailwind, Shadcn, Supabase, and Polar test payment.",
+      "details": "Create a new Next.js project using TypeScript. Integrate Tailwind CSS for styling and Shadcn for UI components. Set up Supabase for database and authentication. Configure Polar for payment processing. Ensure all dependencies are installed and the project is hosted on Vercel.",
+      "testStrategy": "Verify the project setup by running the development server and checking the integration of Tailwind, Shadcn, Supabase, and Polar.",
+      "priority": "high",
+      "dependencies": [],
+      "status": "pending",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Initialize Next.js Project with TypeScript",
+          "description": "Create a new Next.js project using TypeScript to ensure type safety and better developer experience.",
+          "dependencies": [],
+          "details": "Run `npx create-next-app@latest --ts` to bootstrap a Next.js app with TypeScript support. This will generate the necessary project structure and configuration files, including `tsconfig.json`.[3][4][5]",
+          "status": "done"
+        },
+        {
+          "id": 2,
+          "title": "Configure Tailwind CSS and Shadcn UI",
+          "description": "Set up Tailwind CSS for utility-first styling and integrate Shadcn UI components for rapid UI development.",
+          "dependencies": [
+            1
+          ],
+          "details": "Install Tailwind CSS following the official Next.js guide, configure `tailwind.config.js`, and add Tailwind directives to your global CSS. Then, install Shadcn UI and import desired components into your project.",
+          "status": "done"
+        },
+        {
+          "id": 3,
+          "title": "Set Up Supabase Integration",
+          "description": "Integrate Supabase for backend services such as authentication and database management.",
+          "dependencies": [
+            1
+          ],
+          "details": "Install the Supabase client library, configure environment variables with your Supabase project credentials, and initialize Supabase in your Next.js app for data operations.\n<info added on 2025-05-18T22:57:28.768Z>\n<update timestamp=\"2023-11-01T12:00:00Z\">Implementation Plan for Task 1.3: Set up Supabase Integration\n\nBased on Supabase documentation for Next.js App Router using `@supabase/ssr`:\n\n1. **Install Dependencies:**\n   * Required packages: `@supabase/supabase-js`, `@supabase/ssr`.\n   * Command: `npm install @supabase/supabase-js @supabase/ssr`.\n\n2. **Environment Variables:**\n   * Create/update `.env.local` with:\n     ```env\n     NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url\n     NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key\n     ```\n   * User will need to replace placeholders with actual credentials.\n   * Update `.env.example` accordingly.\n   * Ensure `.env.local` is in `.gitignore`.\n\n3. **Supabase Client Utility Files (under `src/lib/supabase/`):**\n   * **`client.ts` (Browser Client):**\n     ```typescript\n     import { createBrowserClient } from '@supabase/ssr'\n\n     export function createClient() {\n       return createBrowserClient(\n         process.env.NEXT_PUBLIC_SUPABASE_URL!,\n         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!\n       )\n     }\n     ```\n   * **`server.ts` (Server Client):**\n     ```typescript\n     import { createServerClient, type CookieOptions } from '@supabase/ssr'\n     import { cookies } from 'next/headers'\n\n     export function createClient() {\n       const cookieStore = cookies()\n\n       return createServerClient(\n         process.env.NEXT_PUBLIC_SUPABASE_URL!,\n         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,\n         {\n           cookies: {\n             getAll() {\n               return cookieStore.getAll()\n             },\n             setAll(cookiesToSet) {\n               try {\n                 cookiesToSet.forEach(({ name, value, options }) =>\n                   cookieStore.set(name, value, options)\n                 )\n               } catch {\n                 // The `setAll` method was called from a Server Component.\n                 // This can be ignored if you have middleware refreshing\n                 // user sessions.\n               }\n             },\n           },\n         }\n       )\n     }\n     ```\n   * **`middleware.ts` (Middleware Helper):**\n     ```typescript\n     import { createServerClient, type CookieOptions } from '@supabase/ssr'\n     import { NextResponse, type NextRequest } from 'next/server'\n\n     export async function updateSession(request: NextRequest) {\n       let supabaseResponse = NextResponse.next({\n         request,\n       })\n\n       const supabase = createServerClient(\n         process.env.NEXT_PUBLIC_SUPABASE_URL!,\n         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,\n         {\n           cookies: {\n             getAll() {\n               return request.cookies.getAll()\n             },\n             setAll(cookiesToSet) {\n               cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value, options))\n               supabaseResponse = NextResponse.next({\n                 request,\n               })\n               cookiesToSet.forEach(({ name, value, options }) =>\n                 supabaseResponse.cookies.set(name, value, options)\n               )\n             },\n           },\n         }\n       )\n       await supabase.auth.getUser()\n       return supabaseResponse\n     }\n     ```\n\n4. **Main Middleware File:**\n   * Create `src/middleware.ts`.\n   * Content:\n     ```typescript\n     import { type NextRequest } from 'next/server'\n     import { updateSession } from '@/lib/supabase/middleware' // Or relative path\n\n     export async function middleware(request: NextRequest) {\n       return await updateSession(request)\n     }\n\n     export const config = {\n       matcher: [\n         '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',\n       ],\n     }\n     ```\n   * Path alias `@/` needs to be confirmed from `tsconfig.json`.\n</update>\n</info added on 2025-05-18T22:57:28.768Z>\n<info added on 2025-05-18T23:03:42.963Z>\n<update timestamp=\"2023-11-01T12:00:00Z\">Implementation Plan for Task 1.3: Set up Supabase Integration\n\nBased on Supabase documentation for Next.js App Router using `@supabase/ssr`:\n\n1. **Install Dependencies:**\n   * Required packages: `@supabase/supabase-js`, `@supabase/ssr`.\n   * Command: `npm install @supabase/supabase-js @supabase/ssr`.\n\n2. **Environment Variables:**\n   * Create/update `.env.local` with:\n     ```env\n     NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url\n     NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key\n     ```\n   * User will need to replace placeholders with actual credentials.\n   * Update `.env.example` accordingly.\n   * Ensure `.env.local` is in `.gitignore`.\n\n3. **Supabase Client Utility Files (under `src/lib/supabase/`):**\n   * **`client.ts` (Browser Client):**\n     ```typescript\n     import { createBrowserClient } from '@supabase/ssr'\n\n     export function createClient() {\n       return createBrowserClient(\n         process.env.NEXT_PUBLIC_SUPABASE_URL!,\n         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!\n       )\n     }\n     ```\n   * **`server.ts` (Server Client):**\n     ```typescript\n     import { createServerClient, type CookieOptions } from '@supabase/ssr'\n     import { cookies } from 'next/headers'\n\n     export function createClient() {\n       const cookieStore = cookies()\n\n       return createServerClient(\n         process.env.NEXT_PUBLIC_SUPABASE_URL!,\n         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,\n         {\n           cookies: {\n             getAll() {\n               return cookieStore.getAll()\n             },\n             setAll(cookiesToSet) {\n               try {\n                 cookiesToSet.forEach(({ name, value, options }) =>\n                   cookieStore.set(name, value, options)\n                 )\n               } catch {\n                 // The `setAll` method was called from a Server Component.\n                 // This can be ignored if you have middleware refreshing\n                 // user sessions.\n               }\n             },\n           },\n         }\n       )\n     }\n     ```\n   * **`middleware.ts` (Middleware Helper):**\n     ```typescript\n     import { createServerClient, type CookieOptions } from '@supabase/ssr'\n     import { NextResponse, type NextRequest } from 'next/server'\n\n     export async function updateSession(request: NextRequest) {\n       let supabaseResponse = NextResponse.next({\n         request,\n       })\n\n       const supabase = createServerClient(\n         process.env.NEXT_PUBLIC_SUPABASE_URL!,\n         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,\n         {\n           cookies: {\n             getAll() {\n               return request.cookies.getAll()\n             },\n             setAll(cookiesToSet) {\n               cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value, options))\n               supabaseResponse = NextResponse.next({\n                 request,\n               })\n               cookiesToSet.forEach(({ name, value, options }) =>\n                 supabaseResponse.cookies.set(name, value, options)\n               )\n             },\n           },\n         }\n       )\n       await supabase.auth.getUser()\n       return supabaseResponse\n     }\n     ```\n\n4. **Main Middleware File:**\n   * Create `src/middleware.ts`.\n   * Content:\n     ```typescript\n     import { type NextRequest } from 'next/server'\n     import { updateSession } from '@/lib/supabase/middleware' // Or relative path\n\n     export async function middleware(request: NextRequest) {\n       return await updateSession(request)\n     }\n\n     export const config = {\n       matcher: [\n         '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',\n       ],\n     }\n     ```\n   * Path alias `@/` needs to be confirmed from `tsconfig.json`.\n</update>\n\n<info added on 2023-11-01T12:30:00Z>\n<update timestamp=\"2023-11-01T12:30:00Z\">Progress Update for Task 1.3: Set Up Supabase Integration\n\nThe following steps have been completed:\n\n- Installed `@supabase/supabase-js` and `@supabase/ssr` packages.\n- User confirmed creation of `.env.local` with Supabase credentials.\n- Created `src/lib/supabase/client.ts` (browser client).\n- Created `src/lib/supabase/server.ts` (server client).\n- Created `src/lib/supabase/middleware.ts` (updateSession helper).\n- Created `src/middleware.ts` (main Next.js middleware).\n\nBasic Supabase SDK setup and middleware configuration are complete. Next steps involve integrating these clients into components/routes and conducting thorough testing to ensure proper functionality.</update>\n</info added on 2023-11-01T12:30:00Z>\n</info added on 2025-05-18T23:03:42.963Z>",
+          "status": "done"
+        },
+        {
+          "id": 4,
+          "title": "Implement Polar Payment Processing",
+          "description": "Integrate Polar for handling payment processing within the application.",
+          "dependencies": [
+            1,
+            2,
+            3
+          ],
+          "details": "Install the Polar SDK or API client, configure payment endpoints, and implement payment flows in your Next.js app, ensuring secure handling of payment data.\n<info added on 2025-05-18T23:14:30.090Z>\nImplementation Plan for Task 1.4: Implement Polar Payment Processing\n\nBased on Polar documentation (https://docs.polar.sh/introduction):\n\n1. **Install Dependencies:**\n   * Required packages: `@polar-sh/nextjs`, `zod`.\n   * Command: `npm install @polar-sh/nextjs zod`.\n\n2. **Environment Variables:**\n   * Add to `.env.local` (user to fill actual values):\n     ```env\n     POLAR_ACCESS_TOKEN=your_polar_access_token\n     SUCCESS_URL=your_success_redirect_url (e.g., /payment-success)\n     ```\n   * Update `.env.example` with these variables.\n\n3. **Create Basic Checkout Route Handler:**\n   * File: `src/app/api/checkout/route.ts` (or similar, assuming App Router).\n   * Content:\n     ```typescript\n     import { Checkout } from '@polar-sh/nextjs';\n     import {NextResponse} from \"next/server\";\n\n     // Ensure that the GET handler is exported correctly for Next.js App Router.\n     // The Polar documentation shows a direct export, which should work.\n     export async function GET(request: Request) {\n       // The Checkout function from Polar SDK is designed to be a GET handler directly.\n       // It typically handles the redirect to Polar's checkout page.\n       // We might need to invoke it or it might return a handler.\n       // For now, assuming it returns a handler or a Response directly.\n       \n       // Defensive check for environment variables\n       if (!process.env.POLAR_ACCESS_TOKEN) {\n         return NextResponse.json({ error: 'Polar access token is not configured.' }, { status: 500 });\n       }\n       if (!process.env.SUCCESS_URL) {\n         return NextResponse.json({ error: 'Success URL is not configured.' }, { status: 500 });\n       }\n\n       const polarCheckout = Checkout({\n         accessToken: process.env.POLAR_ACCESS_TOKEN,\n         successUrl: process.env.SUCCESS_URL,\n       });\n       \n       // The Polar 'Checkout' utility likely returns a Next.js request handler or a Response.\n       // If it's a handler, it needs to be called with the request.\n       // If it directly returns a Response, that's fine.\n       // Let's assume it returns a handler that we need to call.\n       // The type of 'Checkout' would clarify this, but proceeding based on typical patterns.\n       return polarCheckout(request);\n     }\n     ```\n\n4. **User Actions Required Post-Implementation:**\n   * Obtain `POLAR_ACCESS_TOKEN` from Polar dashboard and set it in `.env.local`.\n   * Define and set `SUCCESS_URL` in `.env.local` (e.g., `/payment-success`).\n   * Create the actual success page (e.g., `src/app/payment-success/page.tsx`).\n</info added on 2025-05-18T23:14:30.090Z>\n<info added on 2025-05-18T23:20:20.020Z>\nInstall the Polar SDK or API client, configure payment endpoints, and implement payment flows in your Next.js app, ensuring secure handling of payment data.\n<info added on 2025-05-18T23:14:30.090Z>\nImplementation Plan for Task 1.4: Implement Polar Payment Processing\n\nBased on Polar documentation (https://docs.polar.sh/introduction):\n\n1. **Install Dependencies:**\n   * Required packages: `@polar-sh/nextjs`, `zod`.\n   * Command: `npm install @polar-sh/nextjs zod`.\n\n2. **Environment Variables:**\n   * Add to `.env.local` (user to fill actual values):\n     ```env\n     POLAR_ACCESS_TOKEN=your_polar_access_token\n     SUCCESS_URL=your_success_redirect_url (e.g., /payment-success)\n     ```\n   * Update `.env.example` with these variables.\n\n3. **Create Basic Checkout Route Handler:**\n   * File: `src/app/api/checkout/route.ts` (or similar, assuming App Router).\n   * Content:\n     ```typescript\n     import { Checkout } from '@polar-sh/nextjs';\n     import {NextResponse} from \"next/server\";\n\n     // Ensure that the GET handler is exported correctly for Next.js App Router.\n     // The Polar documentation shows a direct export, which should work.\n     export async function GET(request: Request) {\n       // The Checkout function from Polar SDK is designed to be a GET handler directly.\n       // It typically handles the redirect to Polar's checkout page.\n       // We might need to invoke it or it might return a handler.\n       // For now, assuming it returns a handler or a Response directly.\n       \n       // Defensive check for environment variables\n       if (!process.env.POLAR_ACCESS_TOKEN) {\n         return NextResponse.json({ error: 'Polar access token is not configured.' }, { status: 500 });\n       }\n       if (!process.env.SUCCESS_URL) {\n         return NextResponse.json({ error: 'Success URL is not configured.' }, { status: 500 });\n       }\n\n       const polarCheckout = Checkout({\n         accessToken: process.env.POLAR_ACCESS_TOKEN,\n         successUrl: process.env.SUCCESS_URL,\n       });\n       \n       // The Polar 'Checkout' utility likely returns a Next.js request handler or a Response.\n       // If it's a handler, it needs to be called with the request.\n       // If it directly returns a Response, that's fine.\n       // Let's assume it returns a handler that we need to call.\n       // The type of 'Checkout' would clarify this, but proceeding based on typical patterns.\n       return polarCheckout(request);\n     }\n     ```\n\n4. **User Actions Required Post-Implementation:**\n   * Obtain `POLAR_ACCESS_TOKEN` from Polar dashboard and set it in `.env.local`.\n   * Define and set `SUCCESS_URL` in `.env.local` (e.g., `/payment-success`).\n   * Create the actual success page (e.g., `src/app/payment-success/page.tsx`).\n</info added on 2025-05-18T23:14:30.090Z>\n\n<info added on 2025-05-19T15:45:00.000Z>\nProgress Update for Task 1.4: Implement Polar Payment Processing\n\nThe following steps have been completed:\n\n- Installed `@polar-sh/nextjs` and `zod` packages.\n- User confirmed that `.env.local` has been updated with `POLAR_ACCESS_TOKEN` and `SUCCESS_URL`.\n- Created `src/app/api/checkout/route.ts` with a GET handler that initializes Polar Checkout.\n\nThe basic Polar checkout route is now set up. The next steps involve:\n\n- User configuration of environment variables to ensure they are correctly set.\n- Creation of a success page at `src/app/payment-success/page.tsx`.\n- Frontend integration to trigger the checkout process from the user interface.\n</info added on 2025-05-19T15:45:00.000Z>\n</info added on 2025-05-18T23:20:20.020Z>",
+          "status": "done"
+        },
+        {
+          "id": 5,
+          "title": "Deploy Application to Vercel",
+          "description": "Deploy the fully configured Next.js application to Vercel for production hosting.",
+          "dependencies": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "details": "Connect your repository to Vercel, configure environment variables as needed, and trigger a deployment. Verify that all integrations (Tailwind, Shadcn, Supabase, Polar) work as expected in the deployed environment.\n<info added on 2025-05-19T14:28:03.116Z>\n<update timestamp=\"2023-10-06T12:00:00Z\">Implementation Plan for Task 1.5: Deploy Application to Vercel\n\n1. Prepare project: Ensure all code is committed and pushed to a Git provider (GitHub, GitLab, Bitbucket). Double-check all required environment variables are documented and ready for production.\n2. Connect to Vercel: Go to https://vercel.com/import, select your Git provider, and import your repository.\n3. Add environment variables in Vercel dashboard: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, POLAR_ACCESS_TOKEN, SUCCESS_URL (use production values).\n4. Confirm build settings: Vercel should auto-detect Next.js. Build command: `next build`, output: `.next`.\n5. Deploy: Click 'Deploy' to trigger the first deployment. Wait for build and deployment to complete.\n6. Verify: Visit the production URL, test all integrations (Tailwind, Shadcn, Supabase, Polar payment flow, /payment-success page). Check Vercel logs if needed.\n7. (Optional) Set up a custom domain in Vercel if desired.\n\nReady to proceed with deployment steps.</update>\n</info added on 2025-05-19T14:28:03.116Z>",
+          "status": "done"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Implement User Authentication",
+      "description": "Develop the authentication system using Supabase Auth for email and OAuth.",
+      "details": "Use Supabase Auth to implement email and OAuth authentication. Create sign-up and login pages. Ensure user sessions are managed correctly and securely.",
+      "testStrategy": "Test user registration and login flows using Cypress to ensure authentication works as expected.",
+      "priority": "high",
+      "dependencies": [
+        1
+      ],
+      "status": "pending",
+      "subtasks": []
+    },
+    {
+      "id": 3,
+      "title": "Integrate Payment System",
+      "description": "Set up the payment system using Polar to gate access to features.",
+      "details": "Integrate Polar for handling payments. Implement a payment wall that restricts access to certain features until payment is made. Use Polar webhooks to update user plans in Supabase.",
+      "testStrategy": "Simulate payment transactions and verify that user plans are updated correctly in the database.",
+      "priority": "high",
+      "dependencies": [
+        2
+      ],
+      "status": "pending",
+      "subtasks": []
+    },
+    {
+      "id": 4,
+      "title": "Develop Infinite Canvas",
+      "description": "Create an infinite, zoomable canvas using react-konva for layout planning.",
+      "details": "Use react-konva to implement an infinite canvas that supports panning and zooming. Ensure the canvas can handle large layouts efficiently.",
+      "testStrategy": "Test canvas interactions such as panning and zooming using Cypress to ensure smooth performance.",
+      "priority": "high",
+      "dependencies": [
+        1
+      ],
+      "status": "pending",
+      "subtasks": []
+    },
+    {
+      "id": 5,
+      "title": "Implement Table Management",
+      "description": "Add functionality to create and manage tables on the canvas.",
+      "details": "Develop features to add rectangle and circle tables to the canvas. Implement grid-snap alignment for tables. Store table data in Supabase.",
+      "testStrategy": "Verify table creation and alignment using Cypress tests to ensure tables snap correctly to the grid.",
+      "priority": "high",
+      "dependencies": [
+        4
+      ],
+      "status": "pending",
+      "subtasks": []
+    },
+    {
+      "id": 6,
+      "title": "Create Guest List Sidebar",
+      "description": "Develop a collapsible guest list sidebar using Shadcn components.",
+      "details": "Use Shadcn <Sheet> component to create a collapsible sidebar for the guest list. Sync the state with Zustand for consistent state management.",
+      "testStrategy": "Test the sidebar's expand/collapse functionality and state synchronization using Cypress.",
+      "priority": "medium",
+      "dependencies": [
+        1
+      ],
+      "status": "pending",
+      "subtasks": []
+    },
+    {
+      "id": 7,
+      "title": "Implement Drag-and-Drop Seating",
+      "description": "Enable drag-and-drop functionality for seating guests at tables.",
+      "details": "Use HTML drag-and-drop events to allow users to drag guest badges from the sidebar and drop them onto seats at tables. Update seat assignments in Supabase.",
+      "testStrategy": "Perform end-to-end tests with Cypress to ensure guests can be seated correctly and seat assignments are updated.",
+      "priority": "high",
+      "dependencies": [
+        5,
+        6
+      ],
+      "status": "pending",
+      "subtasks": []
+    },
+    {
+      "id": 8,
+      "title": "Develop Seat Swap Logic",
+      "description": "Implement logic to swap guests between seats or unseat them.",
+      "details": "Create a system to allow guests to be swapped between seats or unseated by dragging them back to the guest list. Use atomic DB transactions to ensure data integrity.",
+      "testStrategy": "Test seat swapping and unseating functionality using Cypress to ensure data consistency.",
+      "priority": "medium",
+      "dependencies": [
+        7
+      ],
+      "status": "pending",
+      "subtasks": []
+    },
+    {
+      "id": 9,
+      "title": "Implement Table Edit Modal",
+      "description": "Allow users to edit table numbers and seat counts via a modal.",
+      "details": "Develop a modal that appears on double-clicking a table, allowing users to edit the table number and seat count. Update the table data in Supabase accordingly.",
+      "testStrategy": "Verify modal functionality and data updates using Cypress tests.",
+      "priority": "medium",
+      "dependencies": [
+        5
+      ],
+      "status": "pending",
+      "subtasks": []
+    },
+    {
+      "id": 10,
+      "title": "Add Autosave and Load Feature",
+      "description": "Implement autosave functionality and load the last saved floorplan on login.",
+      "details": "Use a debounced function to autosave floorplans to Supabase every 5 seconds. Load the last saved floorplan when a user logs in.",
+      "testStrategy": "Test autosave intervals and loading of floorplans using Cypress to ensure data persistence.",
+      "priority": "medium",
+      "dependencies": [
+        7
+      ],
+      "status": "pending",
+      "subtasks": []
+    },
+    {
+      "id": 11,
+      "title": "Develop Right-Side Control Panel",
+      "description": "Create a control panel for global actions like save, reset, and delete.",
+      "details": "Use Shadcn Accordion to develop a collapsible panel on the right side of the canvas. Implement buttons for saving, resetting, and deleting tables.",
+      "testStrategy": "Test the functionality of each control panel action using Cypress to ensure they perform as expected.",
+      "priority": "medium",
+      "dependencies": [
+        10
+      ],
+      "status": "pending",
+      "subtasks": []
+    },
+    {
+      "id": 12,
+      "title": "Enhance Canvas with Grid-Snap and Zoom Shortcuts",
+      "description": "Improve canvas interactions with grid-snap and keyboard shortcuts for zooming.",
+      "details": "Implement grid-snap functionality to align tables to a 20 px grid. Add keyboard shortcuts for zooming in and out of the canvas.",
+      "testStrategy": "Test grid-snap alignment and keyboard shortcuts using Cypress to ensure usability improvements.",
+      "priority": "low",
+      "dependencies": [
+        4
+      ],
+      "status": "pending",
+      "subtasks": []
+    },
+    {
+      "id": 13,
+      "title": "Implement Dark Mode",
+      "description": "Add dark mode support using Tailwind's dark mode features.",
+      "details": "Use Tailwind's dark mode utilities to implement a dark mode theme for the application. Ensure all UI components are styled appropriately for dark mode.",
+      "testStrategy": "Verify dark mode styling using visual regression tests to ensure consistency across components.",
+      "priority": "low",
+      "dependencies": [
+        1
+      ],
+      "status": "pending",
+      "subtasks": []
+    },
+    {
+      "id": 14,
+      "title": "Develop CSV Import/Export Feature",
+      "description": "Allow users to import and export guest lists and seating arrangements via CSV.",
+      "details": "Implement functionality to import guest lists and seating arrangements from CSV files and export current arrangements to CSV. Use a library like Papaparse for CSV parsing.",
+      "testStrategy": "Test CSV import and export functionality using Cypress to ensure data is correctly parsed and formatted.",
+      "priority": "low",
+      "dependencies": [
+        6
+      ],
+      "status": "pending",
+      "subtasks": []
+    },
+    {
+      "id": 15,
+      "title": "Create PDF Floorplan Export",
+      "description": "Enable users to export the seating chart as a PDF document.",
+      "details": "Use a library like jsPDF to implement PDF export functionality for the seating chart. Ensure the PDF accurately represents the current layout.",
+      "testStrategy": "Test PDF export functionality using Cypress to ensure the layout is correctly captured and exported.",
+      "priority": "low",
+      "dependencies": [
+        4
+      ],
+      "status": "pending",
+      "subtasks": []
+    },
+    {
+      "id": 16,
+      "title": "Implement Share Link with Permissions",
+      "description": "Allow users to share floorplans via a link with configurable permissions.",
+      "details": "Develop a system to generate shareable links for floorplans. Implement permission settings to control access levels for shared links.",
+      "testStrategy": "Test link generation and permission settings using Cypress to ensure secure and correct access control.",
+      "priority": "low",
+      "dependencies": [
+        10
+      ],
+      "status": "pending",
+      "subtasks": []
+    },
+    {
+      "id": 17,
+      "title": "Develop Multi-Floorplan Dashboard",
+      "description": "Create a dashboard for managing multiple floorplans.",
+      "details": "Implement a dashboard interface that allows users to view and manage multiple floorplans. Use Zustand for state management and Supabase for data storage.",
+      "testStrategy": "Test dashboard functionality using Cypress to ensure users can manage multiple floorplans effectively.",
+      "priority": "low",
+      "dependencies": [
+        10
+      ],
+      "status": "pending",
+      "subtasks": []
+    },
+    {
+      "id": 18,
+      "title": "Optimize Canvas Performance",
+      "description": "Improve canvas performance for handling large numbers of elements.",
+      "details": "Implement virtualization techniques to optimize canvas performance. Throttle re-renders to improve responsiveness on low-end devices.",
+      "testStrategy": "Use performance testing tools to measure and improve canvas performance under heavy load.",
+      "priority": "medium",
+      "dependencies": [
+        4
+      ],
+      "status": "pending",
+      "subtasks": []
+    },
+    {
+      "id": 19,
+      "title": "Audit Supabase RLS Policies",
+      "description": "Ensure Supabase Row Level Security policies are correctly configured.",
+      "details": "Review and audit all Supabase RLS policies to ensure data security and prevent accidental data leaks. Conduct integration tests to verify policy effectiveness.",
+      "testStrategy": "Perform integration tests to validate RLS policy configurations and ensure data access is correctly restricted.",
+      "priority": "medium",
+      "dependencies": [
+        2
+      ],
+      "status": "pending",
+      "subtasks": []
+    },
+    {
+      "id": 20,
+      "title": "Implement Accessibility Features",
+      "description": "Add ARIA roles and high-contrast mode for accessibility.",
+      "details": "Use ARIA roles to enhance drag-and-drop accessibility. Implement a high-contrast mode toggle for better visibility.",
+      "testStrategy": "Conduct accessibility testing using tools like Axe to ensure compliance with accessibility standards.",
+      "priority": "low",
+      "dependencies": [
+        1
+      ],
+      "status": "pending",
+      "subtasks": []
+    }
+  ]
+}

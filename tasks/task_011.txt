@@ -1,0 +1,11 @@
+# Task ID: 11
+# Title: Develop Right-Side Control Panel
+# Status: pending
+# Dependencies: 10
+# Priority: medium
+# Description: Create a control panel for global actions like save, reset, and delete.
+# Details:
+Use Shadcn Accordion to develop a collapsible panel on the right side of the canvas. Implement buttons for saving, resetting, and deleting tables.
+
+# Test Strategy:
+Test the functionality of each control panel action using Cypress to ensure they perform as expected.

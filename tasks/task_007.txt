@@ -1,0 +1,11 @@
+# Task ID: 7
+# Title: Implement Drag-and-Drop Seating
+# Status: pending
+# Dependencies: 5, 6
+# Priority: high
+# Description: Enable drag-and-drop functionality for seating guests at tables.
+# Details:
+Use HTML drag-and-drop events to allow users to drag guest badges from the sidebar and drop them onto seats at tables. Update seat assignments in Supabase.
+
+# Test Strategy:
+Perform end-to-end tests with Cypress to ensure guests can be seated correctly and seat assignments are updated.

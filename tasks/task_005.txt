@@ -1,0 +1,11 @@
+# Task ID: 5
+# Title: Implement Table Management
+# Status: pending
+# Dependencies: 4
+# Priority: high
+# Description: Add functionality to create and manage tables on the canvas.
+# Details:
+Develop features to add rectangle and circle tables to the canvas. Implement grid-snap alignment for tables. Store table data in Supabase.
+
+# Test Strategy:
+Verify table creation and alignment using Cypress tests to ensure tables snap correctly to the grid.
